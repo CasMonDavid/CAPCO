@@ -1,6 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
+const isDev = !app.isPackaged;
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
@@ -8,10 +10,19 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
-    }
+    },
   });
 
-  win.loadFile(path.join(__dirname, '../frontend/dist/index.html')); // lo compilarás con Vite o CRA
+  if (isDev) {
+    win.loadURL('http://localhost:3000');
+  } else {
+    win.loadFile(path.join(__dirname, '../Frontend/public/index.html'));
+  }
+
+  // Opcional: abre DevTools en modo dev
+  if (isDev) {
+    win.webContents.openDevTools();
+  }
 }
 
 app.whenReady().then(() => {
